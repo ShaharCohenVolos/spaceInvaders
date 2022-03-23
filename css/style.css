@@ -1,0 +1,78 @@
+@keyframes animate {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0.7;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+body {
+    background-color: black;
+    color: white;
+}
+
+h1 {
+    text-align: center;
+    font-size: 70px;
+    cursor: pointer;
+    animation: animate 1.5s linear infinite;
+}
+
+table {
+    table-layout: fixed;
+    margin: auto;
+    width: 50%;
+    border-collapse: collapse;
+}
+
+.cell {
+    /* border: 1px white solid; */
+    height: 45px;
+    width: 4px;
+    text-align: center;
+    font-size: xx-large;
+}
+
+.earth {
+    background: linear-gradient(green, brown);
+}
+
+.game-over {
+    font-size: 100px;
+    position: absolute;
+    width: 50%;
+    text-align: center;
+    top: 40%;
+    left: 20%;
+    display: none;
+}
+
+.reset-game {
+    display: block;
+    margin: auto;
+    height: 30px;
+    font-size: large;
+    font-weight: bold;
+}
+
+.score {
+    font-size: 50px;
+    position: absolute;
+    top: 50%;
+}
+
+.super {
+    font-size: 50px;
+    top: 70%;
+    position: absolute;
+}
+
+.bomb {
+    font-size: 50px;
+    top: 80%;
+    position: absolute;
+}
