@@ -8,11 +8,7 @@ const ALIEN = '🐔';
 var gAliens;
 var gDirection = 'right';
 var gAliensFirstCol = 1;
-var gMovement = {
-    direction: 'right',
-    aliensFirstCol: 1,
-    aliensFirstRow: 0
-}
+var gAlienMovement;
 
 
 function createAliens(board) {
@@ -32,30 +28,30 @@ function createAliens(board) {
 
 
 function moveAliensHorizontal() {
-    var drctnVal = (gMovement.direction === 'right') ? 1 : -1;
+    var drctnVal = (gAlienMovement.direction === 'right') ? 1 : -1;
     for (var i = 0; i < gAliens.length; i++) {
         for (var j = 0; j < gAliens[i].length; j++) {
-            if (gAliens[i][j].pos.j === gMovement.aliensFirstCol) updateCell(gAliens[i][j].pos);
+            if (gAliens[i][j].pos.j === gAlienMovement.aliensFirstCol) updateCell(gAliens[i][j].pos);
 
             gAliens[i][j].pos.j += drctnVal;
             updateCell(gAliens[i][j].pos, gAliens[i][j].value);
         }
     }
-    gMovement.aliensFirstCol += drctnVal;
+    gAlienMovement.aliensFirstCol += drctnVal;
     if (isEdge()) changeDirection();
 }
 
 function changeDirection() {
-    if (gMovement.direction === 'right') {
-        gMovement.direction = 'left';
-        gMovement.aliensFirstCol = gBoard.length - 1;
+    if (gAlienMovement.direction === 'right') {
+        gAlienMovement.direction = 'left';
+        gAlienMovement.aliensFirstCol = gBoard.length - 1;
         MoveAliensDown();
-        gMovement.aliensFirstRow++;
+        gAlienMovement.aliensFirstRow++;
     } else {
-        gMovement.direction = 'right';
-        gMovement.aliensFirstCol = 0;
+        gAlienMovement.direction = 'right';
+        gAlienMovement.aliensFirstCol = 0;
         MoveAliensDown();
-        gMovement.aliensFirstRow++;
+        gAlienMovement.aliensFirstRow++;
     }
 }
 
@@ -77,7 +73,7 @@ function isEdge() {
 function MoveAliensDown() {
     for (var i = 0; i < gAliens.length; i++) {
         for (var j = 0; j < gAliens[i].length; j++) {
-            if (gAliens[i][j].pos.i === gMovement.aliensFirstRow) updateCell(gAliens[i][j].pos);
+            if (gAliens[i][j].pos.i === gAlienMovement.aliensFirstRow) updateCell(gAliens[i][j].pos);
 
             gAliens[i][j].pos.i++;
             updateCell(gAliens[i][j].pos, gAliens[i][j].value);

@@ -16,13 +16,26 @@ var gAliensIntervalId;
 var gLaserPos;
 var gLaserIntervalId;
 var gScore = 0;
-var gSuperCount = ['🦸🏽‍♂️', '🦸🏽‍♂️', '🦸🏽‍♂️'];
-var gBombCount = ['💥', '💥', '💥']
+var gSuperCount;
+var gBombCount;
 
 
 function init() {
     gBoard = createBoard(BOARD_SIZE);
     gAliens = createAliens(gBoard);
+
+    gSuperCount = ['🦸🏽‍♂️', '🦸🏽‍♂️', '🦸🏽‍♂️'];
+    gBombCount = ['💥', '💥', '💥'];
+    gAlienMovement = {
+        direction: 'right',
+        aliensFirstCol: 1,
+        aliensFirstRow: 0
+    };
+
+    var elStart = document.querySelector('h1');
+    elStart.style.animation = 'animate 1.5s linear infinite';
+
+
     renderBoard(gBoard);
 }
 
@@ -92,7 +105,7 @@ function handleKey(ev) {
             }
             break;
         case 'x':
-            if (gSuperCount.length > 0 && !gHero.isShoot) {
+            if (gSuperCount.length > 0 && !gHero.isShoot && !gHero.isSuper) {
                 superMode();
                 gSuperCount.pop();
                 renderBoostsCount();
@@ -180,6 +193,7 @@ function resetGame() {
     gGame.isOn = false;
     var elGameOver = document.querySelector('.game-over');
     elGameOver.style.display = 'none';
+    gScore = 0;
     init();
 }
 
