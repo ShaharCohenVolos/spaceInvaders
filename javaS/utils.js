@@ -1,6 +1,5 @@
 'use strict'
 
-function createMat() {}
 
 function renderBoard(board) {
     var strHTML = '';

@@ -8,12 +8,9 @@ const EARTH = 'EARTH';
 
 var gLaser = '🎆';
 var gBoard;
-var gGame = {
-    isOn: false,
-    aliensCount: 0
-}
-var gAliensIntervalId;
+var gGame;
 var gLaserPos;
+var gAliensIntervalId;
 var gLaserIntervalId;
 var gScore = 0;
 var gSuperCount;
@@ -21,8 +18,13 @@ var gBombCount;
 
 
 function init() {
+
+    gGame = {
+        isOn: false,
+        aliensCount: ALIENS_ROW_COUNT * ALIENS_ROW_LENGTH
+    }
+
     gBoard = createBoard(BOARD_SIZE);
-    gAliens = createAliens(gBoard);
 
     gSuperCount = ['🦸🏽‍♂️', '🦸🏽‍♂️', '🦸🏽‍♂️'];
     gBombCount = ['💥', '💥', '💥'];
@@ -40,6 +42,7 @@ function init() {
 }
 
 function startGame() {
+    if (gGame.isOn) return;
     gLaserPos = {
         i: gHero.pos.i - 1,
         j: gHero.pos.j
@@ -66,6 +69,7 @@ function createBoard(size) {
         }
     }
     createHero(board);
+    gAliens = createAliens(board);
     return board;
 }
 
@@ -86,15 +90,19 @@ function handleKey(ev) {
     var j = gHero.pos.j;
     // console.log(ev);
     if (!gGame.isOn) return;
+    if (isVictory()) return;
 
-    switch (ev.key) {
+
+    switch (ev.code) {
+        //Hero movement
         case 'ArrowLeft':
             moveHero(j - 1);
             break;
         case 'ArrowRight':
             moveHero(j + 1);
             break;
-        case ' ':
+            //Laser Keys
+        case 'Space':
             if (gHero.isShoot) return;
             if (gHero.isSuper) {
                 gHero.isSuper = false;
@@ -104,14 +112,14 @@ function handleKey(ev) {
                 gLaserIntervalId = setInterval(shootLaser, 80);
             }
             break;
-        case 'x':
+        case 'KeyX':
             if (gSuperCount.length > 0 && !gHero.isShoot && !gHero.isSuper) {
                 superMode();
                 gSuperCount.pop();
                 renderBoostsCount();
             }
             break;
-        case 'n':
+        case 'KeyN':
             if (gBombCount.length > 0 && !gHero.isShoot && !gHero.isSuper) {
                 gLaser = '✨';
                 gHero.isBomb = true;
@@ -132,6 +140,7 @@ function getElCell(pos) {
 function gameOver(strHTML) {
     if (gGame.isOn) return false;
     clearInterval(gAliensIntervalId);
+    clearInterval(gLaserIntervalId);
 
     var elGameOver = document.querySelector('.game-over');
     elGameOver.innerHTML = strHTML + ' ' + elGameOver.innerHTML;
@@ -143,6 +152,7 @@ function gameOver(strHTML) {
 function shootLaser() {
     gHero.isShoot = true;
 
+
     updateCell(gLaserPos);
     gLaserPos.i--;
 
@@ -152,12 +162,12 @@ function shootLaser() {
         gLaserPos.i = gHero.pos.i - 1;
         clearInterval(gLaserIntervalId);
         gLaserPos.j = gHero.pos.j;
+        gHero.isBomb = false;
         return;
     }
     var nextCell = gBoard[gLaserPos.i][gLaserPos.j];
     if (nextCell.gameObject === ALIEN) {
         gHero.isShoot = false;
-
 
         renderScore();
 
@@ -171,15 +181,17 @@ function shootLaser() {
 }
 
 function isVictory() {
-    var aliensCount = 0;
+    var deadAliensCount = 0;
     for (var i = 0; i < gAliens.length; i++) {
         for (var j = 0; j < gAliens[i].length; j++) {
-            if (gAliens[i][j].value !== ' ') aliensCount++;
+            if (gAliens[i][j].value === ALIEN_DEAD) deadAliensCount++;
         }
     }
-    if (aliensCount === 0) {
+    console.log(deadAliensCount, gGame.aliensCount)
+    if (gGame.aliensCount <= deadAliensCount) {
         gGame.isOn = false;
-        return gameOver('Victory!');
+        gameOver('Victory!');
+        return true;
     }
     return false;
 }
@@ -207,9 +219,9 @@ function renderBoostsCount() {
 
 function blowUpNegs(pos) {
     for (var i = pos.i - 1; i <= pos.j + 1; i++) {
-        if (i < 0 || i > gAliens.length - 1) continue;
+        if (i < 0 || i > gBoard.length - 1) continue;
         for (var j = pos.j - 1; j <= pos.j + 1; j++) {
-            if (j < 0 || j > gAliens[i].length - 1) continue;
+            if (j < 0 || j > gBoard[i].length - 1) continue;
             removeAlien({ i: i, j: j });
         }
     }
